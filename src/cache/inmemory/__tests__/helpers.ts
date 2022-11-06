@@ -69,11 +69,11 @@ export function withError(func: Function, regex?: RegExp) {
     console.error = error;
   }
 }
-
-describe("defaultNormalizedCacheFactory", function () {
-  it("should return an EntityStore", function () {
-    const store = defaultNormalizedCacheFactory();
-    expect(store).toBeInstanceOf(EntityStore);
-    expect(store).toBeInstanceOf(EntityStore.Root);
-  });
-});
+//
+// describe("defaultNormalizedCacheFactory", function () {
+//   it("should return an EntityStore", function () {
+//     const store = defaultNormalizedCacheFactory();
+//     expect(store).toBeInstanceOf(EntityStore);
+//     expect(store).toBeInstanceOf(EntityStore.Root);
+//   });
+// });

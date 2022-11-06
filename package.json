@@ -30,6 +30,7 @@
   },
   "homepage": "https://www.apollographql.com/docs/react/",
   "scripts": {
+    "benchmark": "NODE_ENV=production ts-node --project tsconfig.bench.json ./src/__benchmarks__/benchmarks.ts",
     "prebuild": "npm run clean",
     "build": "tsc",
     "postbuild": "npm run update-version && npm run invariants && npm run sourcemaps && npm run rollup && npm run prepdist && npm run postprocess-dist && npm run verify-version",
@@ -80,9 +81,11 @@
   },
   "dependencies": {
     "@graphql-typed-document-node/core": "^3.1.1",
+    "@types/benchmark": "^2.1.2",
     "@wry/context": "^0.7.0",
     "@wry/equality": "^0.5.0",
     "@wry/trie": "^0.3.0",
+    "benchmark": "^2.1.4",
     "graphql-tag": "^2.12.6",
     "hoist-non-react-statics": "^3.3.2",
     "optimism": "^0.16.1",
