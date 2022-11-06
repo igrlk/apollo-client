@@ -47,6 +47,9 @@ export type RefetchWritePolicy = "merge" | "overwrite";
  */
 export type ErrorPolicy = 'none' | 'ignore' | 'all';
 
+export type RefetchQueryOptions<TVariables = OperationVariables, TData = any> =
+    Pick<QueryOptions<TVariables, TData>, "variables"> & { query: TypedDocumentNode<TData, TVariables> };
+
 /**
  * Query options.
  */
@@ -220,6 +223,7 @@ export interface MutationBaseOptions<
   TVariables = OperationVariables,
   TContext = DefaultContext,
   TCache extends ApolloCache<any> = ApolloCache<any>,
+  TRefetchQueryOptions extends RefetchQueryOptions = RefetchQueryOptions<any>
 > {
   /**
    * An object that represents the result of this mutation that will be
@@ -247,8 +251,10 @@ export interface MutationBaseOptions<
    * once these queries return.
    */
   refetchQueries?:
-    | ((result: FetchResult<TData>) => InternalRefetchQueriesInclude)
-    | InternalRefetchQueriesInclude;
+      | ((
+      result: FetchResult<TData>
+  ) => InternalRefetchQueriesInclude<TRefetchQueryOptions>)
+      | InternalRefetchQueriesInclude<TRefetchQueryOptions>;
 
   /**
    * By default, `refetchQueries` does not wait for the refetched queries to
@@ -315,7 +321,8 @@ export interface MutationOptions<
   TVariables = OperationVariables,
   TContext = DefaultContext,
   TCache extends ApolloCache<any> = ApolloCache<any>,
-> extends MutationBaseOptions<TData, TVariables, TContext, TCache> {
+  TRefetchQueryOptions extends RefetchQueryOptions = RefetchQueryOptions<any>
+> extends MutationBaseOptions<TData, TVariables, TContext, TCache, TRefetchQueryOptions> {
   /**
    * A GraphQL document, often created with `gql` from the `graphql-tag`
    * package, that contains a single mutation inside of it.

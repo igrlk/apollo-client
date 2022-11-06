@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { GraphQLError } from 'graphql';
+import { DocumentNode, GraphQLError } from 'graphql';
 import gql from 'graphql-tag';
 import { act } from 'react-dom/test-utils';
 import { render, waitFor, screen } from '@testing-library/react';
@@ -7,7 +7,20 @@ import { renderHook } from '@testing-library/react-hooks';
 import userEvent from '@testing-library/user-event';
 import fetchMock from "fetch-mock";
 
-import { ApolloClient, ApolloLink, ApolloQueryResult, Cache, NetworkStatus, Observable, ObservableQuery, TypedDocumentNode } from '../../../core';
+import {
+  ApolloCache,
+  ApolloClient,
+  ApolloLink,
+  ApolloQueryResult,
+  Cache,
+  DefaultContext,
+  NetworkStatus,
+  Observable,
+  ObservableQuery,
+  OperationVariables,
+  TypedDocumentNode,
+  RefetchQueryOptions
+} from '../../../core';
 import { InMemoryCache } from '../../../cache';
 import { itAsync, MockedProvider, mockSingleLink, subscribeAndCount } from '../../../testing';
 import { ApolloProvider } from '../../context';
@@ -943,6 +956,77 @@ describe('useMutation Hook', () => {
           },
         }),
       });
+
+      type TData1 = { something: string; }
+      type TVars1 = { a: number; b: string; }
+      type TQuery1 = TypedDocumentNode<TData1, TVars1>
+      const query1 = null as any as TQuery1;
+      const variables1 = null as any as TVars1;
+
+      type TData2 = { different: string; }
+      type TVars2 = { c: number; d: string; }
+      type TQuery2 = TypedDocumentNode<TData2, TVars2>
+      const query2 = null as any as TQuery2;
+      const variables2 = null as any as TVars2;
+
+      type TData3 = { completelyDifferent: string; }
+      type TVars3 = { e: number; g: string; }
+      type TQuery3 = DocumentNode
+      const query3 = null as any as TQuery3;
+      const variables3 = null as any as TVars3;
+
+      type TRefetchQueryOptions =
+        | RefetchQueryOptions<TVars1, TData1>
+        | RefetchQueryOptions<TVars2, TData2>
+        | RefetchQueryOptions<TVars3, TData3>
+
+      const [callMutation] = useMutation<
+        any,
+        OperationVariables,
+        DefaultContext,
+        ApolloCache<any>,
+        TRefetchQueryOptions
+      >(mutation, {
+        refetchQueries: [
+          {
+            query: query1,
+            variables: { a: 1, b: '2' },
+          },
+          {
+            query: query1,
+            variables: variables1 // OK
+          },
+          {
+            query: query2,
+            variables: variables2 // OK
+          },
+          {
+            query: query1,
+            variables: variables2 // Error - query1 should be used with vars1 variables
+          }
+        ],
+      })
+
+      callMutation({
+        refetchQueries: [
+          {
+            query: query1,
+            variables: variables1 // OK
+          },
+          {
+            query: query2,
+            variables: variables2 // OK
+          },
+          {
+            query: query3,
+            variables: variables2
+          },
+          {
+            query: query1,
+            variables: variables2 // Error - query1 should be used with vars1 variables
+          }
+        ]
+      })
 
       const { result, waitForNextUpdate } = renderHook(
         () => useMutation(mutation),

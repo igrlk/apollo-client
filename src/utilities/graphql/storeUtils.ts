@@ -22,6 +22,7 @@ import {
 
 import { isNonNullObject } from '../common/objects';
 import { FragmentMap, getFragmentFromSelection } from './fragments';
+import { QueryOptions } from "../../core";
 
 export interface Reference {
   readonly __ref: string;
@@ -57,6 +58,10 @@ export function isDocumentNode(value: any): value is DocumentNode {
     (value as DocumentNode).kind === "Document" &&
     Array.isArray((value as DocumentNode).definitions)
   );
+}
+
+export function isQueryOptions(value: any): value is QueryOptions {
+  return 'query' in value;
 }
 
 function isStringValue(value: ValueNode): value is StringValueNode {

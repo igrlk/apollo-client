@@ -27,6 +27,7 @@ import {
   isDocumentNode,
   isNonNullObject,
   cloneDeep,
+  isQueryOptions,
 } from '../utilities';
 import { ApolloError, isApolloError } from '../errors';
 import {
@@ -751,7 +752,7 @@ export class QueryManager<TStore> {
           queryNamesAndDocs.set(desc, false);
         } else if (isDocumentNode(desc)) {
           queryNamesAndDocs.set(this.transform(desc).document, false);
-        } else if (isNonNullObject(desc) && desc.query) {
+        } else if (isNonNullObject(desc) && isQueryOptions(desc)) {
           legacyQueryOptions.add(desc);
         }
       });

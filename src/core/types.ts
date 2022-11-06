@@ -7,7 +7,7 @@ import { QueryInfo } from './QueryInfo';
 import { NetworkStatus } from './networkStatus';
 import { Resolver } from './LocalState';
 import { ObservableQuery } from './ObservableQuery';
-import { QueryOptions } from './watchQueryOptions';
+import { QueryOptions, RefetchQueryOptions } from './watchQueryOptions';
 import { Cache } from '../cache';
 import { IsStrictlyAny } from '../utilities';
 
@@ -24,7 +24,8 @@ export type OnQueryUpdated<TResult> = (
 ) => boolean | TResult;
 
 export type RefetchQueryDescriptor = string | DocumentNode;
-export type InternalRefetchQueryDescriptor = RefetchQueryDescriptor | QueryOptions;
+export type InternalRefetchQueryDescriptor<TRefetchQueryOptions extends RefetchQueryOptions = RefetchQueryOptions<any>> =
+    RefetchQueryDescriptor | TRefetchQueryOptions;
 
 type RefetchQueriesIncludeShorthand = "all" | "active";
 
@@ -32,8 +33,8 @@ export type RefetchQueriesInclude =
   | RefetchQueryDescriptor[]
   | RefetchQueriesIncludeShorthand;
 
-export type InternalRefetchQueriesInclude =
-  | InternalRefetchQueryDescriptor[]
+export type InternalRefetchQueriesInclude<TRefetchQueryOptions extends RefetchQueryOptions = RefetchQueryOptions<any>> =
+  | InternalRefetchQueryDescriptor<TRefetchQueryOptions>[]
   | RefetchQueriesIncludeShorthand;
 
 // Used by ApolloClient["refetchQueries"]
@@ -140,7 +141,7 @@ export type ApolloQueryResult<T> = {
   */
   errors?: ReadonlyArray<GraphQLError>;
   /**
-  * The single Error object that is passed to onError and useQuery hooks, and is often thrown during manual `client.query` calls. 
+  * The single Error object that is passed to onError and useQuery hooks, and is often thrown during manual `client.query` calls.
   * This will contain both a NetworkError field and any GraphQLErrors.
   * See https://www.apollographql.com/docs/react/data/error-handling/ for more information.
   */

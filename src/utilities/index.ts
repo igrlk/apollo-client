@@ -48,6 +48,7 @@ export {
   resultKeyNameFromField,
   getStoreKeyName,
   getTypenameFromResult,
+  isQueryOptions,
 } from './graphql/storeUtils';
 
 export {

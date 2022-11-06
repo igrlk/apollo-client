@@ -13,6 +13,7 @@ import {
   DefaultContext,
   mergeOptions,
   OperationVariables,
+  RefetchQueryOptions
 } from '../../core';
 import { equal } from '@wry/equality';
 import { DocumentType, verifyDocumentType } from '../parser';
@@ -24,10 +25,11 @@ export function useMutation<
   TVariables = OperationVariables,
   TContext = DefaultContext,
   TCache extends ApolloCache<any> = ApolloCache<any>,
+  TRefetchQueryOptions extends RefetchQueryOptions = RefetchQueryOptions<any>
 >(
   mutation: DocumentNode | TypedDocumentNode<TData, TVariables>,
-  options?: MutationHookOptions<TData, TVariables, TContext>,
-): MutationTuple<TData, TVariables, TContext, TCache> {
+  options?: MutationHookOptions<TData, TVariables, TContext, TCache, TRefetchQueryOptions>,
+): MutationTuple<TData, TVariables, TContext, TCache, TRefetchQueryOptions> {
   const client = useApolloClient(options?.client);
   verifyDocumentType(mutation, DocumentType.Mutation);
   const [result, setResult] = useState<Omit<MutationResult, 'reset'>>({
@@ -56,7 +58,8 @@ export function useMutation<
       TData,
       TVariables,
       TContext,
-      TCache
+      TCache,
+      TRefetchQueryOptions
     > = {}
   ) => {
     const {client, options, mutation} = ref.current;

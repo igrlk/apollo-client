@@ -15,6 +15,7 @@ export {
 } from './ObservableQuery';
 export {
   QueryOptions,
+  RefetchQueryOptions,
   WatchQueryOptions,
   MutationOptions,
   SubscriptionOptions,
